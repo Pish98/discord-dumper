@@ -39,7 +39,7 @@ const COMMANDS = {
       for (let channel of toArray(channels).filter(isTextChannel))
         await downloadChannel(msg, channel, +getArg(msg, 1));
 
-  	  if (entity.channels?.cache) send(msg.channel,  `Done! ${entity.name}`);
+      if (entity.channels?.cache) send(msg.channel,  `Done! ${entity.name}`);
     }
   }
 };
@@ -154,7 +154,7 @@ async function downloadChannel(msg, channel, maxChunks) {
   let lastID;
   let i = 0;
 
-	await send(msg.channel, `Downloading #${getChannelName(channel)}`);
+  await send(msg.channel, `Downloading #${getChannelName(channel)}`);
 
   while (true) {
     if (i >= maxChunks && maxChunks)
@@ -205,7 +205,7 @@ function downloadAttachment({id, name, url}, gid) {
 const DUMP_PATH = getEnv("DUMP_PATH", "data");
 const MAX_MESSAGE_LENGTH = +getEnv("MAX_MESSAGE_LENGTH", 2000);
 const LOG_USER_ID = getEnv("LOG_USER_ID");
-const PREFIX = getEnv("PREFIX", "+");
+const PREFIX = getEnv("PREFIX", "!");
 const USER_TOKENS = getEnvArray("USER_TOKENS");
 const BOT_TOKENS = getEnvArray("BOT_TOKENS");
 
