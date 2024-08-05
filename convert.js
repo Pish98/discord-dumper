@@ -88,7 +88,7 @@ const EXCLUDE_GUILDS = getEnvArray("EXCLUDE_GUILDS");
 const FILTER_CHANNELS = getEnvArray("FILTER_CHANNELS");
 const FILTER_MEMBERS = getEnvArray("FILTER_MEMBERS");
 
-const OUTPUT_FILE = getEnv("OUTPUT_FILE", "/dev/shm/dump.txt");
+const OUTPUT_FILE = getEnv("OUTPUT_FILE", "dump.txt");
 const DUMP_PATH = getEnv("DUMP_PATH", "data");
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
