@@ -33,6 +33,7 @@ TOKEN2
 '
 export LOG_USER_ID= # User ID for receiving startup logs
 export PREFIX=!
+export DUMP_PATH=data
 
 node bot.js
 EOF
