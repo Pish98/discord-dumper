@@ -33,7 +33,7 @@ const messageToText = (m, {deletedMessages, members, channels}) => {
   const name =  m.author.globalName || m.author.username;
   const channel = m.channel.name;
   const attachments = m.attachments
-    .map(a => `${m.guild.id}/attachments/${a.id}.${sliceFileName(a.name)}`)
+    .map(a => `${m.guild?.id || "DC"}/attachments/${a.id}.${sliceFileName(a.name)}`)
     .join("\n");
   
   const deleted = deletedMessages.has(m.id) ? " (deleted)" : "";
