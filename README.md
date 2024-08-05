@@ -74,9 +74,11 @@ It is not recommended to handle commands using user tokens.
 ### !dump
 Save all messages from channels to DUMP_PATH/GUILD_ID/CHANNEL_ID.dump and attachments to DUMP_PATH/GUILD_ID/attachments
 ```
-!dump GUILD_IDS and CHANNEL_IDS
+!dump GUILD_IDS and CHANNEL_IDS or all [number]
 example:
     !dump 123,234,345
+    !dump all # dump all channels
+    !dump all 5 # dump 5*100 messages from all channels
 ```
 
 ### !guilds
