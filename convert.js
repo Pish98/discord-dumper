@@ -32,6 +32,7 @@ const getReadableDate = ms => {
 const messageToText = (m, {deletedMessages, members, channels}) => {
   const name =  m.author.globalName || m.author.username;
   const channel = m.channel.name;
+
   const attachments = m.attachments
     .map(a => `${m.guild?.id || "DC"}/attachments/${a.id}.${sliceFileName(a.name)}`)
     .join("\n");
@@ -76,10 +77,15 @@ const readDump = dumpFilePath =>
     stream.on("line", line => {
       if (!line.length) return;
 
-      const message = JSON.parse(line);
+      const m = JSON.parse(line);
 
-      if (FILTER_MEMBERS.length ? FILTER_MEMBERS.includes(message.author.id) : true) 
-        messages.push(message);
+      if (m.action === "delete") METADATA.deletedMessages.add(m.id);
+      METADATA.channels[m.channel.id] = m.channel.name;
+      METADATA.guilds[m.guild?.id || "DC"] = m.guild?.name || "DC";
+      METADATA.members[m.author.id] = m.author.globalName || m.author.username;
+
+      if (FILTER_MEMBERS.length ? FILTER_MEMBERS.includes(m.author.id) : true) 
+        messages.push(m);
     });
   });
 
@@ -92,6 +98,13 @@ const OUTPUT_FILE = getEnv("OUTPUT_FILE", "dump.txt");
 const DUMP_PATH = getEnv("DUMP_PATH", "data");
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+const METADATA = {
+  channels: {},
+  guilds: {},
+  members: {},
+  deletedMessages: new Set()
+};
 
 const guilds = fs.readdirSync(DUMP_PATH)
   .filter(gid => isDir(guildPath(gid)))
@@ -123,24 +136,15 @@ const guilds = fs.readdirSync(DUMP_PATH)
   uniqueMessages.sort((m1, m2) => (m1.editedTimestamp || m1.createdTimestamp) - (m2.editedTimestamp || m2.createdTimestamp));
   console.timeEnd("Sort");
 
-  console.time("Collect metadata");
-  const metadata = uniqueMessages.reduce((acc, m) => {
-    acc.channels[m.channel.id] = m.channel.name;
-    if (m.action === "delete") acc.deletedMessages.add(m.id);
-    acc.guilds[m.guild?.id || "DC"] = m.guild?.name || "DC";
-    acc.members[m.author.id] = m.author.globalName || m.author.username;
-
-    return acc;
-  }, {channels: {}, guilds: {}, members: {}, deletedMessages: new Set()});
-  console.timeEnd("Collect metadata");
-
   console.time("Write");
   const writeStream = fs.createWriteStream(OUTPUT_FILE);
 
   uniqueMessages
     .filter(m => m.action !== "delete")
     .forEach((m, i, a) => {
-      const text = messageToText(m, metadata);
+      const text = messageToText(m, METADATA);
+
+      if (!text?.length) return;
 
       writeStream.write(text + (i === a.length - 1 ? "" : "\n\n"));
     });
